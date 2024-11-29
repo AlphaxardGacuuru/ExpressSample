@@ -31,12 +31,11 @@ async function start() {
 	app.use(ErrorHandler)
 
 	// Listen the server
-	app.listen(PORT, HOST)
-
-	consola.ready({
-		message: `SERVER LISTENING ON HTTP://${HOST}:${PORT}`.green.underline.toUpperCase(),
-		badge: true,
-	})
+	app.listen(PORT, HOST, () =>
+		console.log(
+			`\nSERVER LISTENING ON HTTP://${HOST.toUpperCase()}:${PORT.toUpperCase()}`.green.underline
+		)
+	)
 }
 
 start()

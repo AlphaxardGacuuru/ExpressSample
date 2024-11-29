@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"server": "cross-env NODE_ENV=development nodemon app/index.js --watch server",
+		"server": "cross-env NODE_ENV=development npx nodemon index.js --watch server",
 		"migrate": "migrate-mongo up",
 		"rollback": "migrate-mongo down"
 	},
@@ -21,9 +21,7 @@
 		"migrate-mongo": "^11.0.0",
 		"mongodb": "^6.8.0",
 		"mongoose": "^6.1.9",
-		"mongoose-paginate": "^5.0.3"
-	},
-	"devDependencies": {
-		"nodemon": "^1.18.9"
+		"mongoose-paginate": "^5.0.3",
+		"nodemon": "^3.1.7"
 	}
 }

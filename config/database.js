@@ -8,7 +8,7 @@ const Mongoose = () => {
 		})
 		.then((res) => {
 			console.log(
-				`\n\nMONGO DB CONNECTED: ${res.connection.host.toUpperCase()}\n\n`.cyan.underline
+				`\nMONGO DB CONNECTED: ${res.connection.host.toUpperCase()}\n\n`.cyan.underline
 			)
 		})
 		.catch((err) => {
