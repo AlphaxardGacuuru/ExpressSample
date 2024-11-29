@@ -107,7 +107,7 @@ class UserController extends Controller {
 				status: "Success",
 				message: "Authenticated",
 				data: {
-					id: req.auth_id,
+					id: req.auth._id,
 					name: req.auth.name,
 					email: req.auth.email,
 					token: req.auth.token,

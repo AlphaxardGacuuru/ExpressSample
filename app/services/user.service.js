@@ -2,6 +2,7 @@ import Service from "./service.js"
 import asyncHandler from "express-async-handler"
 
 import User from "../models/user.js"
+import UserResource from "../resources/user.resource.js"
 
 class UserService extends Service {
 	constructor() {
@@ -14,13 +15,16 @@ class UserService extends Service {
 
 	index() {
 		return asyncHandler(async (req, res) => {
-			const users = await User.find({})
-			// const users = await User.paginate({}, {page: 3})
+			// const users = await User.find({})
+			const users = await User.paginate({}, { page: 3 })
 
+			const data = new UserResource(users)
+
+			// return users
 			res.status(201).json({
 				status: "Success",
-				message: `${users.total} users`,
-				data: users,
+				message: `${data.total} users`,
+				data: data,
 			})
 		})
 	}
@@ -30,16 +34,14 @@ class UserService extends Service {
 	 */
 	show() {
 		return asyncHandler(async (req, res) => {
-			const user = await User.findById(req.params.id)
+			const user = await User.findById(req.params.id).lean()
+
+			const data = new UserResource(user)
 
 			res.status(200).json({
 				status: "Success",
 				message: "1 user",
-				data: {
-					id: user._id,
-					name: user.name,
-					email: user.email,
-				},
+				data: data,
 			})
 		})
 	}

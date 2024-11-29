@@ -3,7 +3,6 @@ import asyncHandler from "express-async-handler"
 import User from "../models/user.js"
 
 const auth = asyncHandler(async (req, res, next) => {
-	console.log("req", req)
 	let authHeader = req.headers.authorization
 	let token
 

@@ -13,11 +13,11 @@ class UserRoute extends Route {
 	}
 
 	routes() {
+		this.router.post("/login", this.validate(userValidator.login()), userController.login())
+		this.router.get("/auth", this.authMiddleware, userController.auth())
 		this.router.get("/", userController.index())
 		this.router.get("/:id", userController.show())
 		this.router.post("/", this.validate(userValidator.store()), userController.store())
-		this.router.post("/login", this.validate(userValidator.login()), userController.login())
-		this.router.get("/auth", userController.auth())
 	}
 }
 
