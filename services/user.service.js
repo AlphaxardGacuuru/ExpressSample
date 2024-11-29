@@ -55,21 +55,107 @@ class UserService extends Service {
 
 			let hashedPassword = await this.hash(password)
 
-			// Create User
-			const user = await User.create({
-				name,
-				email,
-				password: hashedPassword,
-			})
+			// Start a database session
+			const session = await User.startSession()
+			session.startTransaction() // Begin transaction
 
-			res.status(201).json({
+			try {
+				// Create the first user
+				const user = await User.create(
+					[
+						{
+							name,
+							email,
+							password: hashedPassword,
+						},
+					],
+					{ session }
+				)
+
+				// Create the second user
+				const user2 = await User.create(
+					[
+						{
+							name: `${name}2`,
+							email: `${email}`,
+							password: hashedPassword,
+						},
+					],
+					{ session }
+				)
+
+				// Commit the transaction
+				await session.commitTransaction()
+				session.endSession()
+
+				res.status(201).json({
+					status: "Success",
+					message: `${user[0].name}, ${user2[0].name} created successfully`,
+					data: [user[0], user2[0]],
+				})
+			} catch (error) {
+				// Rollback the transaction in case of an error
+				await session.abortTransaction()
+				session.endSession()
+
+				res.status(500).json({
+					status: "Failed",
+					message: "An error occurred during user creation",
+					error: error.message,
+				})
+			}
+		})
+	}
+
+	login() {
+		return asyncHandler(async (req, res) => {
+			const { email, password } = req.body
+
+			const user = await User.findOne({ email: email })
+
+			// Check if user exists
+			if (!user) {
+				res.status(400).json({
+					status: "Error",
+					message: "User doesn't exist",
+					errors: [],
+				})
+			}
+
+			let passwordMatches = await this.bcryptCompare(password, user.password)
+
+			// // Check password matches
+			if (!passwordMatches) {
+				res.status(400).json({
+					status: "Failed",
+					message: "Password doesn't match",
+					errors: [],
+				})
+			}
+
+			res.status(200).json({
 				status: "Success",
-				message: `${user.name} created successfully`,
+				message: "Logged In",
 				data: {
-					_id: user.id,
+					id: user._id,
 					name: user.name,
 					email: user.email,
 					token: this.generateToken(user._id),
+				},
+			})
+		})
+	}
+
+	auth() {
+		return asyncHandler(async (req, res) => {
+			res.status(200).json({
+				status: "Success",
+				message: "Authenticated",
+				data: {
+					id: req.auth._id,
+					name: req.auth.name,
+					email: req.auth.email,
+					token: req.auth.token,
 				},
 			})
 		})
